@@ -17,6 +17,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"encoding/base64"
 
 	"github.com/coreos/go-oidc"
 	"github.com/spf13/cobra"
@@ -24,6 +25,8 @@ import (
 )
 
 const exampleAppState = "I wish to wash my irish wristwatch"
+
+var b64CA string
 
 type app struct {
 	clientID     string
@@ -44,6 +47,7 @@ type app struct {
 func httpClientForRootCAs(rootCAs string) (*http.Client, error) {
 	tlsConfig := tls.Config{RootCAs: x509.NewCertPool()}
 	rootCABytes, err := ioutil.ReadFile(rootCAs)
+	b64CA = base64.StdEncoding.EncodeToString(rootCABytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read root-ca: %v", err)
 	}
@@ -239,7 +243,7 @@ func (a *app) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authCodeURL := ""
-	scopes = append(scopes, "openid", "profile", "email")
+	scopes = append(scopes, "openid", "profile", "email", "groups")
 	if r.FormValue("offline_access") != "yes" {
 		authCodeURL = a.oauth2Config(scopes).AuthCodeURL(exampleAppState)
 	} else if a.offlineAsScope {
@@ -323,5 +327,5 @@ func (a *app) handleCallback(w http.ResponseWriter, r *http.Request) {
 	buff := new(bytes.Buffer)
 	json.Indent(buff, []byte(claims), "", "  ")
 
-	renderToken(w, a.redirectURI, rawIDToken, accessToken, token.RefreshToken, buff.Bytes())
+	renderToken(w, a.redirectURI, rawIDToken, accessToken, token.RefreshToken, buff.Bytes(), idToken.Issuer, a.clientID, a.clientSecret, b64CA)
 }

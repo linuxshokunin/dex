@@ -33,6 +33,10 @@ type tokenTmplData struct {
 	RefreshToken string
 	RedirectURL  string
 	Claims       string
+	Issuer       string
+	Audience     string
+	Secret       string
+        CA           string
 }
 
 var tokenTmpl = template.Must(template.New("token.html").Parse(`<html>
@@ -49,9 +53,24 @@ pre {
     </style>
   </head>
   <body>
+  <h1>Your kubeconfig</h1>
+    <p><pre style="color:white;background-color:black"><code>kubectl config set-credentials USER_NAME \
+    --auth-provider=oidc \
+    --auth-provider-arg=idp-issuer-url={{ .Issuer }} \
+    --auth-provider-arg=client-id={{ .Audience }} \
+    --auth-provider-arg=client-secret={{ .Secret }} \
+	{{- if .RefreshToken }}
+    --auth-provider-arg=refresh-token={{ .RefreshToken }} \
+        {{- end }}
+    --auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
+    --auth-provider-arg=id-token={{ .IDToken }}</code></pre></p>
+  <br>
+  <h1>Info</h1>
     <p> ID Token: <pre><code>{{ .IDToken }}</code></pre></p>
+    <!--
     <p> Access Token: <pre><code>{{ .AccessToken }}</code></pre></p>
     <p> Claims: <pre><code>{{ .Claims }}</code></pre></p>
+    -->
 	{{ if .RefreshToken }}
     <p> Refresh Token: <pre><code>{{ .RefreshToken }}</code></pre></p>
 	<form action="{{ .RedirectURL }}" method="post">
@@ -63,13 +82,17 @@ pre {
 </html>
 `))
 
-func renderToken(w http.ResponseWriter, redirectURL, idToken, accessToken, refreshToken string, claims []byte) {
+func renderToken(w http.ResponseWriter, redirectURL, idToken, accessToken, refreshToken string, claims []byte, issuer string, audience string, secret string, b64CA string) {
 	renderTemplate(w, tokenTmpl, tokenTmplData{
 		IDToken:      idToken,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		RedirectURL:  redirectURL,
 		Claims:       string(claims),
+		Issuer:       issuer,
+		Audience:     audience,
+		Secret:       secret,
+		CA:           b64CA,
 	})
 }
 
