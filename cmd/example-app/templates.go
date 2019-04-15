@@ -69,17 +69,15 @@ pre {
   <br>
   <h1>Info</h1>
     <p> ID Token: <pre><code>{{ .IDToken }}</code></pre></p>
-    <!--
-    <p> Access Token: <pre><code>{{ .AccessToken }}</code></pre></p>
-    <p> Claims: <pre><code>{{ .Claims }}</code></pre></p>
-    -->
 	{{ if .RefreshToken }}
     <p> Refresh Token: <pre><code>{{ .RefreshToken }}</code></pre></p>
-	<form action="{{ .RedirectURL }}" method="post">
-	  <input type="hidden" name="refresh_token" value="{{ .RefreshToken }}">
-	  <input type="submit" value="Redeem refresh token">
+	  <form action="{{ .RedirectURL }}" method="post">
+	    <input type="hidden" name="refresh_token" value="{{ .RefreshToken }}">
+	    <input type="submit" value="Redeem refresh token">
     </form>
 	{{ end }}
+	  <p> Access Token: <pre><code>{{ .AccessToken }}</code></pre></p>
+	  <p> Claims: <pre><code>{{ .Claims }}</code></pre></p>
   </body>
 </html>
 `))
