@@ -59,10 +59,12 @@ pre {
     --auth-provider-arg=idp-issuer-url={{ .Issuer }} \
     --auth-provider-arg=client-id={{ .Audience }} \
     --auth-provider-arg=client-secret={{ .Secret }} \
-	{{- if .RefreshToken }}
+	      {{- if .RefreshToken }}
     --auth-provider-arg=refresh-token={{ .RefreshToken }} \
-        {{- end }}
-    --auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
+				{{- end }}
+				{{- if .CA }}
+		--auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
+		    {{ end }}
     --auth-provider-arg=id-token={{ .IDToken }}</code></pre></p>
   <br>
   <h1>Info</h1>
