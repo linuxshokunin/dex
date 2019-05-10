@@ -64,7 +64,7 @@ pre {
 				{{- end }}
 				{{- if .CA }}
 		--auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
-		    {{ end }}
+		    {{- end }}
     --auth-provider-arg=id-token={{ .IDToken }}</code></pre></p>
   <br>
   <h1>Info</h1>
