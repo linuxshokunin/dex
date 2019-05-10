@@ -63,7 +63,7 @@ pre {
     --auth-provider-arg=refresh-token={{ .RefreshToken }} \
 				{{- end }}
 				{{- if .CA }}
-		--auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
+    --auth-provider-arg=idp-certificate-authority-data={{ .CA }} \
 		    {{- end }}
     --auth-provider-arg=id-token={{ .IDToken }}</code></pre></p>
   <br>
